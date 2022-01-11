@@ -54,8 +54,6 @@ Al posto di 'codice scuola' inserisci il codice della tua scuola.
 Al posto di 'nome utente' inserisci il tuo nome utente.  
 Al posto di 'password' inserisci la tua password.
 
-Nota: Nei prossimi esempi nei quali è utilizzato await la IIFE è sottintesa.
-
 ### Richieste
 
 Per effettuare una richiesta all'API devi utilizzare la funzione `get()`.  
@@ -71,14 +69,15 @@ La funzione richiede due parametri :
   - promemoria
   - orario
   - docenticlasse
-- date: La data scelta          - facoltativo < Potrebbe non funzionare con tutte richieste endpoint < Format : YYYY/MM/DD
+- date: La data scelta          - facoltativo < Potrebbe non funzionare con tutte richieste endpoint < Format : YYYY/MM/DD  
 Nota : In futuro potrebbero mancare alcuni metodi dati gli aggiornamenti del API. Per rimanere aggiornati è consigliato controllare la pagina GItHub di hearot.  
-2Nota : La funzione è asincrona.
+Nota2 : La funzione è asincrona.
 Esempio:
 ```js
   (async () => {
     const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
     const risultato = await sessione.get('assenze','');
+
     console.log(risultato)
   })();
 ```
