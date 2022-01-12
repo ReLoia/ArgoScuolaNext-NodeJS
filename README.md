@@ -41,6 +41,8 @@ In this example I have also used an [Arrow Function `() => {}`](https://develope
 First you need to create a new Session istance: logging in.  
 
 ```js
+...
+
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
 })();
@@ -65,6 +67,8 @@ This function take two parameters :
 Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  
 Example:
 ```js
+...
+
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
   const result = await sessione.get('assenze');
