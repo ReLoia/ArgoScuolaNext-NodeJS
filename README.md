@@ -4,7 +4,7 @@ Una libreria per accedere ai servizi ArgoScuolaNext utilizzano NodeJS.
 
 ### Premessa
 
-Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di @hearot [hearot](https://github.com/hearot/) :  
+Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di @[hearot](https://github.com/hearot/) :  
 [ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python)  
 Non usi Python? Queste sono altre librerie per ArgoScuolaNext **create da hearot** :  
 [ArgoScuolaNext APIs in Php](https://github.com/hearot/ArgoScuolaNext)  
@@ -48,6 +48,8 @@ Il contenuto della IIFE verrà eseguito come un qualsiasi codice ma in modalità
 Per prima cosa devi creare l'istanza della classe Sessione cioè loggare.  
 
 ```js
+...
+
 (async () => {
   const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
 })();
@@ -76,6 +78,8 @@ Nota : In futuro potrebbero mancare alcuni metodi dati gli aggiornamenti del API
 Nota2 : La funzione è asincrona.
 Esempio:
 ```js
+...
+
 (async () => {
   const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
   const risultato = await sessione.get('assenze');
