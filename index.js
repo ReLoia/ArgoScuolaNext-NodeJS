@@ -1,7 +1,15 @@
 const got = require('got');
 
+// Non usato - Non ricordo perché
+// const rgxVer = new RegExp(/([\d.])+/);
 
-const rgxVer = new RegExp(/([\d.])+/);
+class MissingError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = 'MissingError';
+	}
+}
+
 const oggi = new Date(Date.now());
 
 const arHd = {
@@ -14,21 +22,19 @@ const arHd = {
 };
 
 
-// Codice
-
 class Session {
-	logged_in = false;
-	information = {};
+	logIn = false;
+	info = {};
 	version;
 
 	constructor(scuola, nome, pass, version = arHd.ver) {
-		if (!scuola) throw new Error('Codice scuola mancante');
-		if (!nome) throw new Error('Codice utente mancante');
+		if (!scuola || typeof scuola != 'string') throw (!scuola ? new MissingError('Missing school code') : new TypeError('School code must be a String'));
+		if (!nome || typeof nome != 'string') throw (!nome ? new MissingError('Missing name') : new TypeError('Name must be a String'));
 
-		return this.init(scuola, nome, pass, version);
+		return this.#initialize(scuola, nome, pass, version);
 	}
 	
-	async init(scuola, nome, pass, version = arHd.ver) {
+	async #initialize(scuola, nome, pass, version = arHd.ver) {
 		try {
 			const response = await got(
 				`${arHd.ept}login`, {
@@ -47,25 +53,14 @@ class Session {
 				},
 				responseType: 'json'
 			});
-	
-			if (response.statusCode != 200) {
-				try {
-					version = rgxVer.exec(response.body['value'])[0];
-					this.information = Session(scuola, nome, pass, version).information;
-					arHd.ver = version;
-				} catch (err) {
-					throw new Error('Richiesta o credenziali sbagliate.');
-				}
-			}
-			else {
-				this.information = await this.get_information(scuola,
-					response.body['token'],
-					version);
-			}
+			this.info = (await this.#getInfos(scuola,
+				response.body['token'],
+				version))[0];
+
 		} catch (error) {
 			console.log(error);
 		}
-		this.logged_in = true;
+		this.logIn = true;
 		this.version = version;
 
 		return this;
@@ -73,9 +68,9 @@ class Session {
 
 	async get(method, date) {
 
-		if (!this.logged_in) throw new Error('Il client non ha fatto il login. Contattare il creatore della libreria se l\'errore non dovrebbe avvenire.');
+		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
 		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
-		if (typeof method !== 'string') throw new TypeError('Method deve essere una Stringa.');
+		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
 
 		try {
 			const response = await got(
@@ -86,11 +81,11 @@ class Session {
 					"user-agent": arHd.agt,
 					"x-produttore-software": arHd.cpn,
 					"x-app-code": arHd.cod,
-					"x-auth-token": this.information[0]['authToken'],
-					"x-cod-min": this.information[0]['codMin'],
-					"x-prg-alunno": String(this.information[0]['prgAlunno']),
-					"x-prg-scheda": String(this.information[0]['prgScheda']),
-					"x-prg-scuola": String(this.information[0]['prgScuola'])
+					"x-auth-token": this.info['authToken'],
+					"x-cod-min": this.info['codMin'],
+					"x-prg-alunno": String(this.info['prgAlunno']),
+					"x-prg-scheda": String(this.info['prgScheda']),
+					"x-prg-scuola": String(this.info['prgScuola'])
 				},
 				searchParams: {
 					"_dc": Math.round(Date.now()),
@@ -98,27 +93,25 @@ class Session {
 				},
 				responseType: 'json'
 			});
+			return response.body;
 
-			if (response.statusCode != 200) {
-				try {
-					this.version = rgxVer.exec(response.body['value'])[0];
-					return this.get(method, date);
-				} catch (err) {
-					throw new Error('Richiesta o credenziali sbagliate.');
-				}
-			}
-			else {
-				return response.body;
-			}
 		} catch (error) {
-			console.log(error);
+			switch (error.message) {
+				case 'Response code 404 (Not Found)':
+					// console.log(error);
+					throw new Error('This get does not exist.');
+			
+				default:
+					console.log(error)
+					break;
+			}
 		}
 
 	}
 
-	async get_information(scuola, token, version = arHd.ver) {
-		if (!scuola) throw new Error('Codice scuola mancante');
-		if (!token) throw new Error('Token mancante. Contattare il creatore della libreria se l\'errore non dovrebbe avvenire.');
+	async #getInfos(scuola, token, version = arHd.ver) {
+		if (!scuola) throw new MissingError('Missing school code');
+		if (!token) throw new MissingError('Missing token.'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
 		try {
 			const response = await got(
 				`${arHd.ept}schede`, {
@@ -136,11 +129,6 @@ class Session {
 				},
 				responseType: 'json'
 			});
-
-			if (response.statusCode != 200) {
-				version = rgxVer.exec(response.body['value'])[0];
-				return Session.get_information(scuola, token, version);
-			}
 			return response.body;
 
 		} catch (error) {
@@ -149,7 +137,7 @@ class Session {
 	}
 
 	token() {
-		return this.information[0]['authToken'];
+		return this.info.authToken
 	}
 }
 
