@@ -4,12 +4,12 @@ declare class Session {
     logIn: boolean;
     info: {};
     version: string;
-    get(method: string, date?: string): Promise<Risultato>;
+    get(method: string, date?: string): Promise<Result>;
     token(): string;
     #private;
 }
 
-declare interface Risultato {
+declare interface Result {
     dati: Array<Dati>;
     abilitazioni: Abilitazioni;
     disclaimer: string;
