@@ -4,7 +4,7 @@ Una libreria per accedere ai servizi ArgoScuolaNext utilizzano NodeJS.
 
 ### Premessa
 
-Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di [hearot](https://github.com/hearot/) :  
+Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di @hearot [hearot](https://github.com/hearot/) :  
 [ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python)  
 Non usi Python? Queste sono altre librerie per ArgoScuolaNext **create da hearot** :  
 [ArgoScuolaNext APIs in Php](https://github.com/hearot/ArgoScuolaNext)  
