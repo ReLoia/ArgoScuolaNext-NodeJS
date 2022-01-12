@@ -1,66 +1,56 @@
 # ArgoScuolaNext-NodeJS
 
-Una libreria per accedere ai servizi ArgoScuolaNext utilizzano NodeJS.
+A NodeJS library that allows you to interact with ArgoScuolaNext API.
 
-### Premessa
+### Premise
 
-Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di [hearot](https://github.com/hearot/) :  
-[ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python)  
-Non usi Python? Queste sono altre librerie per ArgoScuolaNext **create da hearot** :  
-[ArgoScuolaNext APIs in Php](https://github.com/hearot/ArgoScuolaNext)  
-[ArgoScuolaNext APIs in Go](https://github.com/hearot/ArgoScuolaNext-go)  
+Thank you [hearot](https://github.com/hearot/) for some informations/endpoint/and other I took from your package [ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python).  
 
-Senza chiedere alcun permesso e per questo lo ringrazio molto per il suo lavoro precedentemente fatto per trovare gli endpoint e altro.
+## Installation
 
-## Installazione e Aggiunta nel progetto
-
-Usando npm:
+npm:
 ```bash
 npm i ArgoScuolaNext
 ```
 
-Usando yarn:
+yarn:
 ```bash
 yarn add ArgoScuolaNext
 ```
 
-Importare:
+Importing the package:
 ```js
 const argo = require('./ArgoScuolaNext-NodeJS');
 ```
 
-## Utilizzo
+## Usage
 
-#### Attenzione:  
-Questa libreria è asincrona e quindi dovrai utilizzare [await/async](https://discordjs.guide/additional-info/async-await.html).    
-Per questo motivo è necessario eseguire il codice in una funzione asincrona.  
-Il mio consiglio è di usare una [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE). Esempio :
+#### Warning:  
+This is an async library so you need to use [await/async](https://discordjs.guide/additional-info/async-await.html) or Promise.  
+For this reason you need to use an async function.  
+My tip is to use an [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE). Example :
 ```js
 (async () => {
-	// Codice da eseguire
+	...
 })();
 ```
-Nell'esempio viene utilizzata anche una [Arrow Function `() => {}`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) questo non comporta alcun cambiamento notevole rispetto a una normale funzione `function() {}`  
-Il contenuto della IIFE verrà eseguito come un qualsiasi codice ma in modalità asincrona.
+In this example I have also used an [Arrow Function `() => {}`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) this doesn't have any great difference from a normal function `function() {}`  
 
 ### Login
 
-Per prima cosa devi creare l'istanza della classe Sessione cioè loggare.  
+First you need to create a new Session istance: logging in.  
 
 ```js
 (async () => {
-  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
+  const session = await (new argo('school code', 'user name', 'password'));
 })();
 ```
-Al posto di 'codice scuola' inserisci il codice della tua scuola.  
-Al posto di 'nome utente' inserisci il tuo nome utente.  
-Al posto di 'password' inserisci la tua password.
 
-### Richieste
+### Requests
 
-Per effettuare una richiesta all'API devi utilizzare la funzione `get()`.  
-La funzione richiede due parametri :  
-- method: L'endpoint dell'API   - obbligatorio
+To make a request to the API you need to use `get()`.  
+This function take two parameters :  
+- method: API endpoint   - required
   - oggi
   - assenze
   - notedisciplinari
@@ -71,31 +61,30 @@ La funzione richiede due parametri :
   - promemoria
   - orario
   - docenticlasse
-- date: La data scelta          - facoltativo < Potrebbe non funzionare con tutte richieste endpoint < Format : YYYY/MM/DD  
-Nota : In futuro potrebbero mancare alcuni metodi dati gli aggiornamenti del API. Per rimanere aggiornati è consigliato controllare la pagina GItHub di hearot.  
-Nota2 : La funzione è asincrona.
-Esempio:
+- date: The chosen date   - not required < This may not work with some API endpoints < Format : YYYY/MM/DD  
+Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  
+Example:
 ```js
 (async () => {
-  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
-  const risultato = await sessione.get('assenze');
+  const session = await (new argo('school code', 'user name', 'password'));
+  const result = await sessione.get('assenze');
 
-  console.log(risultato)
+  console.log(result)
 })();
 ```
-Risultato:
+Result:
 ```js
 {
   dati: [
     {
-      codMin: 'Codice scuola',
+      codMin: 'School code',
       prgScuola: number,
       numOra: number,
       prgAlunno: number,
       numAnno: number,
       datAssenza: 'YYYY-MM-DD',
       oraAssenza: '01-01-1970 HH:MM',
-      registrataDa: '(Prof. COGNOME NOME)',
+      registrataDa: '(Prof. SURNAME NAME)',
       flgDaGiustificare: boolean,
       prgScheda: number,
       desAssenza: '',
@@ -108,29 +97,29 @@ Risultato:
   disclaimer: ''
 }
 ```
-Per migliori informazioni sui risultati e altri endpoint controllare la pagina GItHub di hearot.
+For more infos about results and other endpoints check hearot package's GitHub page.
 
-### Esempi più complicati
+### More examples
 
 Attenzione: In questi esempi viene utilizzata la normale conoscenza di JavaScript e non sono delle funzionalità della libreria.
 
-#### Impostare un filtro
+#### Setting up a filter
 ```js
 ...
 
 (async () => {
-  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
-  const risultato = await sessione.get('assenze');
-  const dati = risultato.dati; // Ci interessa avere solo i dati dalla risposta, non le abilitazioni o il disclaimer. Questo ritorna una variabile di tipo Array.
+  const session = await (new argo('school code', 'user name', 'password'));
+  const result = await sessione.get('assenze');
+  const dati = risultato.dati; // We just need `dati`
   
-  // Utilizziamo il metodo `filter()` degli Array con una Arrow Function per impostare il filtro.
-  console.log( dati.filter(dato => { // La variabile può essere chiamata in qualsiasi modo. Io ho scelto dato.
-  	// Nella Arrow Function dobbiamo inserire una condizione che ritordi true.
-	/*
-	  Questa condizione, per esempio, serve a scegliere solo i dati che hanno una certa data.
-	  Per esempio se il parametro `date` non funziona con l'endpoint scelto.
-	  
-	  Possiamo usare tutte le condizioni che vogliamo.
+  // Let's use Arrays' method `filter()` with an Arrow Function to set the filter.
+  console.log( dati.filter(dato => { // You can give any name to the variable.
+  	// In the Arrow Function we must to put a condition that returns true.
+	/**
+   * For example, this condition is used to choose only `dati` with a certain "datAssenza"
+   * This can be useful if the parameter `date` doesn't work with the chosen endpoint.
+   * 
+   * We can use any condition we want.
 	*/
 	return (dato.datAssenza == '2021-09-20' && dato.datGiustificazione == '2021-10-14') || dato.datAssenza == '2021-11-17'
   }) )
@@ -140,16 +129,16 @@ Risultato:
 ```js
 [
   {
-    codMin: 'Codice scuola',
+    codMin: 'School code',
     prgScuola: 1,
     numOra: 1,
     datGiustificazione: '2021-12-02',
-    giustificataDa: '(Prof. COGNOME NOME)',
+    giustificataDa: '(Prof. SURNAME NAME)',
     prgAlunno: number,
     numAnno: 2021,
     datAssenza: '2021-11-17',
     oraAssenza: '01-01-1970 08:20',
-    registrataDa: '(Prof. COGNOME NOME)',
+    registrataDa: '(Prof. SURNAME NAME)',
     flgDaGiustificare: true,
     prgScheda: 1,
     desAssenza: '',
@@ -157,15 +146,15 @@ Risultato:
     binUid: ''
   },
   {
-    codMin: 'Codice scuola',
+    codMin: 'School code',
     prgScuola: 1,
     numOra: null,
     datGiustificazione: '2021-09-21',
-    giustificataDa: '(Prof. COGNOME NOME)',
+    giustificataDa: '(Prof. SURNAME NAME)',
     prgAlunno: number,
     numAnno: 2021,
     datAssenza: '2021-09-20',
-    registrataDa: '(Prof. COGNOME NOME)',
+    registrataDa: '(Prof. SURNAME NAME)',
     flgDaGiustificare: true,
     prgScheda: 1,
     desAssenza: '',
@@ -177,10 +166,7 @@ Risultato:
 
 ## Informazioni finali
 
-Per qualsiasi aiuto contattatemi su Telegram, link nella mia Bio.
-
-Questa libreria è stata creata per usi EDUCATIVI E DI VALUTAZIONE.  
-Nessuna responsabilità viene ritenuta o accettata per uso improprio.  
+For more info contact me.
 
 This is for EDUCATIONAL AND EVALUATION PURPOSES ONLY.  
 No responsibility is held or accepted for misuse.

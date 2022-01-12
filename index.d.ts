@@ -4,7 +4,7 @@ declare class Session {
     logIn: boolean;
     info: {};
     version: string;
-    get(method: string, date: string): Promise<Risultato>;
+    get(method: string, date?: string): Promise<Risultato>;
     token(): string;
     #private;
 }
