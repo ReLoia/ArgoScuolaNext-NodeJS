@@ -46,9 +46,9 @@ Il contenuto della IIFE verrà eseguito come un qualsiasi codice ma in modalità
 Per prima cosa devi creare l'istanza della classe Sessione cioè loggare.  
 
 ```js
-  (async () => {
-    const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
-  })();
+(async () => {
+  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
+})();
 ```
 Al posto di 'codice scuola' inserisci il codice della tua scuola.  
 Al posto di 'nome utente' inserisci il tuo nome utente.  
@@ -74,36 +74,101 @@ Nota : In futuro potrebbero mancare alcuni metodi dati gli aggiornamenti del API
 Nota2 : La funzione è asincrona.
 Esempio:
 ```js
-  (async () => {
-    const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
-    const risultato = await sessione.get('assenze','');
+(async () => {
+  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
+  const risultato = await sessione.get('assenze');
 
-    console.log(risultato)
-  })();
+  console.log(risultato)
+})();
 ```
 Risultato:
-```json
+```js
 {
-  "dati": [
+  dati: [
     {
-      "codMin": "",
-      "prgScuola": number,
-      "numOra": number,
-      "prgAlunno": number,
-      "numAnno": number,
-      "datAssenza": "YYYY-MM-DD",
-      "oraAssenza": "01-01-1970 HH:MM",
-      "registrataDa": "",
-      "flgDaGiustificare": boolean,
-      "prgScheda": number,
-      "desAssenza": "",
-      "codEvento": "",
-      "binUid": ""
+      codMin: 'Codice scuola',
+      prgScuola: number,
+      numOra: number,
+      prgAlunno: number,
+      numAnno: number,
+      datAssenza: 'YYYY-MM-DD',
+      oraAssenza: '01-01-1970 HH:MM',
+      registrataDa: '(Prof. COGNOME NOME)',
+      flgDaGiustificare: boolean,
+      prgScheda: number,
+      desAssenza: '',
+      codEvento: '',
+      binUid: ''
     }
   ],
-  "abilitazioni": {
+  abilitazioni: {
   },
-  "disclaimer": ""
+  disclaimer: ''
 }
 ```
 Per migliori informazioni sui risultati e altri endpoint controllare la pagina GItHub di hearot.
+
+### Esempi più complicati
+
+Attenzione: In questi esempi viene utilizzata la normale conoscenza di JavaScript e non sono delle funzionalità della libreria.
+
+#### Impostare un filtro
+```js
+...
+
+(async () => {
+  const sessione = await (new argo('codice scuola', 'nome utente', 'password'));
+  const risultato = await sessione.get('assenze');
+  const dati = risultato.dati; // Ci interessa avere solo i dati dalla risposta, non le abilitazioni o il disclaimer. Questo ritorna una variabile di tipo Array.
+  
+  // Utilizziamo il metodo `filter()` degli Array con una Arrow Function per impostare il filtro.
+  console.log( dati.filter(dato => { // La variabile può essere chiamata in qualsiasi modo. Io ho scelto dato.
+  	// Nella Arrow Function dobbiamo inserire una condizione che ritordi true.
+	/*
+	  Questa condizione, per esempio, serve a scegliere solo i dati che hanno una certa data.
+	  Per esempio se il parametro `date` non funziona con l'endpoint scelto.
+	  
+	  Possiamo usare tutte le condizioni che vogliamo.
+	*/
+	return (dato.datAssenza == '2021-09-20' && dato.datGiustificazione == '2021-10-14') || dato.datAssenza == '2021-11-17'
+  }) )
+})();
+```
+Risultato:
+```js
+[
+  {
+    codMin: 'Codice scuola',
+    prgScuola: 1,
+    numOra: 1,
+    datGiustificazione: '2021-12-02',
+    giustificataDa: '(Prof. COGNOME NOME)',
+    prgAlunno: number,
+    numAnno: 2021,
+    datAssenza: '2021-11-17',
+    oraAssenza: '01-01-1970 08:20',
+    registrataDa: '(Prof. COGNOME NOME)',
+    flgDaGiustificare: true,
+    prgScheda: 1,
+    desAssenza: '',
+    codEvento: 'I',
+    binUid: ''
+  },
+  {
+    codMin: 'Codice scuola',
+    prgScuola: 1,
+    numOra: null,
+    datGiustificazione: '2021-09-21',
+    giustificataDa: '(Prof. COGNOME NOME)',
+    prgAlunno: number,
+    numAnno: 2021,
+    datAssenza: '2021-09-20',
+    registrataDa: '(Prof. COGNOME NOME)',
+    flgDaGiustificare: true,
+    prgScheda: 1,
+    desAssenza: '',
+    codEvento: 'A',
+    binUid: ''
+  }
+]
+```
