@@ -105,8 +105,6 @@ For more infos about results and other endpoints check hearot package's GitHub p
 
 ### More examples
 
-Attenzione: In questi esempi viene utilizzata la normale conoscenza di JavaScript e non sono delle funzionalità della libreria.
-
 #### Setting up a filter
 ```js
 ...
@@ -129,7 +127,7 @@ Attenzione: In questi esempi viene utilizzata la normale conoscenza di JavaScrip
   }) )
 })();
 ```
-Risultato:
+Result:
 ```js
 [
   {
@@ -168,7 +166,7 @@ Risultato:
 ]
 ```
 
-## Informazioni finali
+## Final infos
 
 For more info contact me.
 
