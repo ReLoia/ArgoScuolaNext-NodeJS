@@ -1,6 +1,6 @@
 {
   "name": "argoscuolanext",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "description": "Una libreria per accedere ai servizi ArgoScuolaNext via Node",
   "main": "index.js",
   "scripts": {
