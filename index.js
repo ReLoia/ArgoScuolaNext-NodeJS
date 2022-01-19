@@ -66,8 +66,7 @@ class Session {
 		return this;
 	}
 
-	async get(method, date) {
-
+	async #get(method, date) {
 		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
 		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
 		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
@@ -106,7 +105,34 @@ class Session {
 					break;
 			}
 		}
+	}
 
+	async oggi(date) {
+		return this.#get('oggi', date)
+	}
+	async assenze(date) {
+		return this.#get('assenze', date)
+	}
+	async notedisciplinari(date) {
+		return this.#get('notedisciplinari', date)
+	}
+	async votigiornalieri(date) {
+		return this.#get('votigiornalieri', date)
+	}
+	async compiti(date) {
+		return this.#get('compiti', date)
+	}
+	async argomenti(date) {
+		return this.#get('argomenti', date)
+	}
+	async promemoria(date) {
+		return this.#get('promemoria', date)
+	}
+	async orario(date) {
+		return this.#get('orario', date)
+	}
+	async docenticlasse(date) {
+		return this.#get('docenticlasse', date)
 	}
 
 	async #getInfos(scuola, token, version = arHd.ver) {

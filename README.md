@@ -50,19 +50,19 @@ First you need to create a new Session istance: logging in.
 
 ### Requests
 
-To make a request to the API you need to use `get()`.  
-This function take two parameters :  
-- method: API endpoint   - required
-  - oggi
-  - assenze
-  - notedisciplinari
-  - votigiornalieri
-  - votiscrutinio
-  - compiti
-  - argomenti
-  - promemoria
-  - orario
-  - docenticlasse
+To make a request to the API you need to use the endpoint's method.  
+Those methods are :
+- oggi
+- assenze
+- notedisciplinari
+- votigiornalieri
+- votiscrutinio
+- compiti
+- argomenti
+- promemoria
+- orario
+- docenticlasse
+Those methods accept as parameter :
 - date: The chosen date   - not required < This may not work with some API endpoints < Format : YYYY/MM/DD  
 Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  
 Example:
@@ -71,7 +71,7 @@ Example:
 
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
-  const result = await sessione.get('assenze');
+  const result = await sessione.assenze();
 
   console.log(result)
 })();
@@ -81,19 +81,20 @@ Result:
 {
   dati: [
     {
-      codMin: 'School code',
-      prgScuola: number,
-      numOra: number,
-      prgAlunno: number,
-      numAnno: number,
-      datAssenza: 'YYYY-MM-DD',
-      oraAssenza: '01-01-1970 HH:MM',
-      registrataDa: '(Prof. SURNAME NAME)',
-      flgDaGiustificare: boolean,
-      prgScheda: number,
-      desAssenza: '',
-      codEvento: '',
-      binUid: ''
+      codMin: string;
+      prgScuola: number;
+      prgAlunno: number;
+      numAnno: number;
+      prgScheda: number;
+      numOra: number;
+      datGiustificazione: string;
+      giustificataDa: string;
+      datAssenza: string;
+      registrataDa: string;
+      flgDaGiustificare: boolean;
+      desAssenza: string;
+      binUid: string;
+      codEvento: string;
     }
   ],
   abilitazioni: {
@@ -101,7 +102,14 @@ Result:
   disclaimer: ''
 }
 ```
+Using Visual Studio code will certainly help thanks to TypeScript IntelliSense which will show code completion.
+I wrote the [module .d.ts](https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html) of the library. 
+
 For more infos about results and other endpoints check hearot package's GitHub page.
+
+#### Suggestion
+I suggest you to take a look to [index.d.ts](https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS/blob/main/index.d.ts) because it can be very useful to understand the API.
+Any suggestion is accepted! Please if you want to contribute, fork this repo and merge when you have done the modification.
 
 ### More examples
 
@@ -111,14 +119,14 @@ For more infos about results and other endpoints check hearot package's GitHub p
 
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
-  const result = await sessione.get('assenze');
+  const result = await sessione.assenze();
   const dati = risultato.dati; // We just need `dati`
   
   // Let's use Arrays' method `filter()` with an Arrow Function to set the filter.
   console.log( dati.filter(dato => { // You can give any name to the variable.
-  	// In the Arrow Function we must to put a condition that returns true.
+  	// In the Arrow Function we must put a condition that returns true.
 	/**
-   * For example, this condition is used to choose only `dati` with a certain "datAssenza"
+   * For example, this condition is can be used to choose only `dati` with a certain "datAssenza"
    * This can be useful if the parameter `date` doesn't work with the chosen endpoint.
    * 
    * We can use any condition we want.
