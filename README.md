@@ -81,20 +81,20 @@ Result:
 {
   dati: [
     {
-      codMin: string;
-      prgScuola: number;
-      prgAlunno: number;
-      numAnno: number;
-      prgScheda: number;
-      numOra: number;
-      datGiustificazione: string;
-      giustificataDa: string;
-      datAssenza: string;
-      registrataDa: string;
-      flgDaGiustificare: boolean;
-      desAssenza: string;
-      binUid: string;
-      codEvento: string;
+      codMin: string,
+      prgScuola: number,
+      prgAlunno: number,
+      numAnno: number,
+      prgScheda: number,
+      numOra: number,
+      datGiustificazione: string,
+      giustificataDa: string,
+      datAssenza: string,
+      registrataDa: string,
+      flgDaGiustificare: boolean,
+      desAssenza: string,
+      binUid: string,
+      codEvento: string,
     }
   ],
   abilitazioni: {
