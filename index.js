@@ -139,7 +139,7 @@ class Session {
 	}
 
 	async updater() {
-		if (!(process.env.NO_ARGOLB_UPDATE === "true" || process.env.NO_ARGOLB_UPDATE === "True")) { // If the environment variable "NO_ARGOLB_UPDATE" is false then the library will check for updates
+		if (!(process.env.NO_ARGOLB_UPDATE === "true" || process.env.NO_ARGOLB_UPDATE === "True")) { // If the environment variable "NO_ARGOLB_UPDATE" is true then the library will not check for updates
 			try {
 				const response = await got(
 					'https://api.github.com/repos/zXRennyXz/ArgoScuolaNext-NodeJS/releases/latest', {

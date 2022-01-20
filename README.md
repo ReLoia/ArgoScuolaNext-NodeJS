@@ -50,8 +50,8 @@ First you need to create a new Session istance: logging in.
 
 ### Requests
 
-To make a request to the API you need to use the endpoint's method.  
-Those methods are :
+To make a request to the API you need must use the method `get(method, date?)` with the following:
+Methods :
 - oggi
 - assenze
 - notedisciplinari
@@ -63,7 +63,7 @@ Those methods are :
 - orario
 - docenticlasse
 
-Those methods accept as parameter :
+Date :
 - date: The chosen date   - not required < This may not work with some API endpoints < Format : YYYY/MM/DD  
 Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  
 Example:
@@ -72,7 +72,7 @@ Example:
 
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
-  const result = await sessione.assenze();
+  const result = await sessione.get('assenze');
 
   console.log(result)
 })();
@@ -108,10 +108,6 @@ I wrote the [module .d.ts](https://www.typescriptlang.org/docs/handbook/declarat
 
 For more infos about results and other endpoints check hearot package's GitHub page.
 
-#### Suggestion
-I suggest you to take a look to [index.d.ts](https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS/blob/main/index.d.ts) because it can be very useful to understand the API.
-Any suggestion is accepted! Please if you want to contribute, fork this repo and merge when you have done the modification.
-
 ### More examples
 
 #### Setting up a filter
@@ -120,7 +116,7 @@ Any suggestion is accepted! Please if you want to contribute, fork this repo and
 
 (async () => {
   const session = await (new argo('school code', 'user name', 'password'));
-  const result = await sessione.assenze();
+  const result = await sessione.get('assenze');
   const dati = risultato.dati; // We just need `dati`
   
   // Let's use Arrays' method `filter()` with an Arrow Function to set the filter.
@@ -174,6 +170,19 @@ Result:
   }
 ]
 ```
+
+### Updates
+
+The library has a self update checker that can be disabled with the Environmental Variable : "NO_ARGOLB_UPDATE" (really original, I know).
+Setting this variable to true will disable this functionality.
+
+### Declaration file
+
+Check the declaration file to better understand the library.
+Using Visual Studio Code or other IDE with tools like IntelliSense will certainly help you showing autocompletions for the outputs.
+
+### Suggestion
+Any suggestion is accepted! Please if you want to contribute, fork this repo and merge when you have done the modification.
 
 ## Final infos
 

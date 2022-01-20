@@ -2,6 +2,13 @@
 
 Una libreria per accedere ai servizi ArgoScuolaNext utilizzano NodeJS.
 
+# Attenzione
+
+Questo README è obsoleto perché non ho voglia di aggiornare entrambi i README (scusate).
+Per rimanere aggiornati usare il README in inglese oppure contattarmi su Telegram.\
+
+---
+
 ### Premessa
 
 Ho sgraffignato molte delle informazioni/variabili/header/endpoint/altro dalla libreria di [hearot](https://github.com/hearot/) :  
