@@ -5,15 +5,15 @@ declare class Session {
     info: Info;
     version: string;
 
-    oggi(date?: string): Promise<ROggi>;
-    assenze(date?: string): Promise<RAssenze>;
-    notedisciplinari(date?: string): Promise<RNote>;
-    votigiornalieri(date?: string): Promise<RVoti>;
-    compiti(date?: string): Promise<RCompiti>;
-    argomenti(date?: string): Promise<RArgomenti>;
-    promemoria(date?: string): Promise<RPromemoria>;
-    orario(date?: string): Promise<ROrario>;
-    docenticlasse(date?: string): Promise<Array<DDocenti>>;
+    get(method: 'oggi', date?: string): Promise<ROggi>;
+    get(method: 'assenze', date?: string): Promise<RAssenze>;
+    get(method: 'notedisciplinari', date?: string): Promise<RNote>;
+    get(method: 'votigiornalieri', date?: string): Promise<RVoti>;
+    get(method: 'compiti', date?: string): Promise<RCompiti>;
+    get(method: 'argomenti', date?: string): Promise<RArgomenti>;
+    get(method: 'promemoria', date?: string): Promise<RPromemoria>;
+    get(method: 'orario', date?: string): Promise<ROrario>;
+    get(method: 'docenticlasse', date?: string): Promise<Array<DDocenti>>;
 
     token(): string;
 }

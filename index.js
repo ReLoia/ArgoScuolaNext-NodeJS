@@ -1,5 +1,5 @@
 const got = require('got');
-
+require('dotenv').config()
 // Non usato - Non ricordo perché
 // const rgxVer = new RegExp(/([\d.])+/);
 
@@ -66,7 +66,7 @@ class Session {
 		return this;
 	}
 
-	async #get(method, date) {
+	async get(method, date) {
 		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
 		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
 		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
@@ -107,34 +107,6 @@ class Session {
 		}
 	}
 
-	async oggi(date) {
-		return this.#get('oggi', date)
-	}
-	async assenze(date) {
-		return this.#get('assenze', date)
-	}
-	async notedisciplinari(date) {
-		return this.#get('notedisciplinari', date)
-	}
-	async votigiornalieri(date) {
-		return this.#get('votigiornalieri', date)
-	}
-	async compiti(date) {
-		return this.#get('compiti', date)
-	}
-	async argomenti(date) {
-		return this.#get('argomenti', date)
-	}
-	async promemoria(date) {
-		return this.#get('promemoria', date)
-	}
-	async orario(date) {
-		return this.#get('orario', date)
-	}
-	async docenticlasse(date) {
-		return this.#get('docenticlasse', date)
-	}
-
 	async #getInfos(scuola, token, version = arHd.ver) {
 		if (!scuola) throw new MissingError('Missing school code');
 		if (!token) throw new MissingError('Missing token.'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
@@ -165,6 +137,25 @@ class Session {
 	token() {
 		return this.info.authToken
 	}
+
+	async updater() {
+		if (!(process.env.NO_ARGOLB_UPDATE === "true" || process.env.NO_ARGOLB_UPDATE === "True")) { // If the environment variable "NO_ARGOLB_UPDATE" is false then the library will check for updates
+			try {
+				const response = await got(
+					'https://api.github.com/repos/zXRennyXz/ArgoScuolaNext-NodeJS/releases/latest', {
+					responseType: 'json'
+				});
+				if (response.body.tag_name !== (require('./package.json').version)) {
+					console.warn('[ArgoScuolaNext] The library is out of date! Update it from npm.')
+				}
+			}
+			catch (err) {
+				console.log(`There was an error while checking for updates: "${err.message}"
+You can disable this check setting the environment variable "NO_ARGOLB_UPDATE" to true`);
+			}
+		}
+	}
 }
 
+Session.prototype.updater();
 module.exports = Session;

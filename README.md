@@ -62,6 +62,7 @@ Those methods are :
 - promemoria
 - orario
 - docenticlasse
+
 Those methods accept as parameter :
 - date: The chosen date   - not required < This may not work with some API endpoints < Format : YYYY/MM/DD  
 Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
+    "dotenv": "^14.2.0",
     "got": "^11.8.2"
   }
 }
