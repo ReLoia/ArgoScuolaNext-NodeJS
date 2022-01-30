@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS.git"
+    "url": "git+https://github.com/ReLoia/ArgoScuolaNext-NodeJS.git"
   },
   "author": "ReLoia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS/issues"
+    "url": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS/issues"
   },
-  "homepage": "https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS#readme",
+  "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
     "dotenv": "^14.2.0",
     "got": "^11.8.2"

@@ -67,7 +67,7 @@ class Session {
 	}
 
 	async get(method, date) {
-		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
+		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
 		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
 		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
 
@@ -109,7 +109,7 @@ class Session {
 
 	async #getInfos(scuola, token, version = arHd.ver) {
 		if (!scuola) throw new MissingError('Missing school code');
-		if (!token) throw new MissingError('Missing token.'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/zXRennyXz/ArgoScuolaNext-NodeJS
+		if (!token) throw new MissingError('Missing token.'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
 		try {
 			const response = await got(
 				`${arHd.ept}schede`, {
@@ -142,7 +142,7 @@ class Session {
 		if (!(process.env.NO_ARGOLB_UPDATE === "true" || process.env.NO_ARGOLB_UPDATE === "True")) { // If the environment variable "NO_ARGOLB_UPDATE" is true then the library will not check for updates
 			try {
 				const response = await got(
-					'https://api.github.com/repos/zXRennyXz/ArgoScuolaNext-NodeJS/releases/latest', {
+					'https://api.github.com/repos/ReLoia/ArgoScuolaNext-NodeJS/releases/latest', {
 					responseType: 'json'
 				});
 				if (response.body.tag_name !== (require('./package.json').version)) {
