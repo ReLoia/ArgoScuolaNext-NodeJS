@@ -69,16 +69,16 @@ declare interface RNote extends Result {
 declare interface RVoti extends Result {
     dati: Array<DVoti>;
 }
-declare interface RCompiti extends Result {
+declare interface RCompiti extends Omit<Result, 'dati'> {
     dati: Array<DCompiti>;
 }
-declare interface RArgomenti extends Result {
+declare interface RArgomenti extends Omit<Result, 'dati'> {
     dati: Array<DArgomenti>;
 }
-declare interface RPromemoria extends Result {
+declare interface RPromemoria extends Omit<Result, 'dati'> {
     dati: Array<DPromemoria>;
 }
-declare interface ROrario extends Omit<Result, 'abilitazioni'> {
+declare interface ROrario extends Omit<Result, 'abilitazioni' | 'dati'> {
     dati: Array<DOrario>;
 }
 

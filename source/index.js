@@ -1,5 +1,5 @@
 const got = require('got');
-require('dotenv').config()
+require('dotenv').config();
 // Non usato - Non ricordo perché
 // const rgxVer = new RegExp(/([\d.])+/);
 
@@ -33,7 +33,7 @@ class Session {
 
 		return this.#initialize(scuola, nome, pass, version);
 	}
-	
+
 	async #initialize(scuola, nome, pass, version = arHd.ver) {
 		try {
 			const response = await got(
@@ -67,7 +67,7 @@ class Session {
 	}
 
 	async get(method, date) {
-		if (!this.logIn) throw new Error('Client did not login'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
+		if (!this.logIn) throw new Error('Client did not login'); // Contant the creator of the library if the error shouldn't have happened. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
 		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
 		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
 
@@ -99,9 +99,9 @@ class Session {
 				case 'Response code 404 (Not Found)':
 					// console.log(error);
 					throw new Error('This get does not exist.');
-			
+
 				default:
-					console.log(error)
+					console.log(error);
 					break;
 			}
 		}
@@ -109,7 +109,7 @@ class Session {
 
 	async #getInfos(scuola, token, version = arHd.ver) {
 		if (!scuola) throw new MissingError('Missing school code');
-		if (!token) throw new MissingError('Missing token.'); // Contattami se l'errore non sarebbe dovuto avvenire. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
+		if (!token) throw new MissingError('Missing token.'); // Contant the creator of the library if the error shouldn't have happened. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
 		try {
 			const response = await got(
 				`${arHd.ept}schede`, {
@@ -135,18 +135,18 @@ class Session {
 	}
 
 	token() {
-		return this.info.authToken
+		return this.info.authToken;
 	}
 
-	async updater() {
-		if (!(process.env.NO_ARGOLB_UPDATE === "true" || process.env.NO_ARGOLB_UPDATE === "True")) { // If the environment variable "NO_ARGOLB_UPDATE" is true then the library will not check for updates
+	async upcheck() {
+		if (!((process.env.NO_ARGOLB_UPDATE ? process.env.NO_ARGOLB_UPDATE.toLowerCase() : "") === 'true')) { // If the environment variable "NO_ARGOLB_UPDATE" is true then the library will not check for updates
 			try {
 				const response = await got(
 					'https://api.github.com/repos/ReLoia/ArgoScuolaNext-NodeJS/releases/latest', {
 					responseType: 'json'
 				});
-				if (response.body.tag_name !== (require('./package.json').version)) {
-					console.warn('[ArgoScuolaNext] The library is out of date! Update it from npm.')
+				if (response.body.tag_name !== (require('../package.json').version)) {
+					console.warn('\x1b[33m[ArgoScuolaNext] The library is out of date! Update it from npm.\x1b[0m');
 				}
 			}
 			catch (err) {
@@ -157,5 +157,5 @@ You can disable this check setting the environment variable "NO_ARGOLB_UPDATE" t
 	}
 }
 
-Session.prototype.updater();
+Session.prototype.upcheck();
 module.exports = Session;

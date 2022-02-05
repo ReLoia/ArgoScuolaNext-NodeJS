@@ -50,7 +50,7 @@ First you need to create a new Session istance: logging in.
 
 ### Requests
 
-To make a request to the API you need must use the method `get(method, date?)` with the following:
+To make a request to the API you must use the method `get(method, date?)` with the following:
 Methods :
 - oggi
 - assenze
