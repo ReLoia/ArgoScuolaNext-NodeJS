@@ -1,7 +1,7 @@
 {
   "name": "argoscuolanext",
-  "version": "2.1.0",
-  "description": "Una libreria per accedere ai servizi ArgoScuolaNext via NodeJS",
+  "version": "2.1.1",
+  "description": "A library that make it easy to access ArgoScuolaNext API via NodeJS",
   "main": "source/index.js",
   "repository": {
     "type": "git",

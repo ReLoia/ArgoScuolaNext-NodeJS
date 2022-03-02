@@ -33,7 +33,7 @@ class Session {
 	constructor(scuola, nome, pass) {
 		if (ex(scuola) || typeof scuola != 'string') throw (ex(scuola) ? new MissingError('Missing school code') : new TypeError('School code must be a String'));
 		if (ex(nome) || typeof nome != 'string') throw (ex(nome) ? new MissingError('Missing name') : new TypeError('Name must be a String'));
-		if (ex(pass) || typeof pass != 'string') throw (ex(pass) ? new MissingError('Missing name') : new TypeError('Name must be a String'));
+		if (ex(pass) || typeof pass != 'string') throw (ex(pass) ? new MissingError('Missing password') : new TypeError('Password must be a String'));
 
 		return this.#initialize(scuola, nome, pass);
 	}
@@ -96,7 +96,7 @@ class Session {
 		} catch (error) {
 			switch (error.message) {
 				case 'Response code 404 (Not Found)':
-					throw new Error('That method does not exist not exist.');
+					throw new Error('That method does not exist.');
 
 				default:
 					console.log(error);
