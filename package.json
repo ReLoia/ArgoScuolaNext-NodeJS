@@ -1,6 +1,6 @@
 {
   "name": "argoscuolanext",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Una libreria per accedere ai servizi ArgoScuolaNext via NodeJS",
   "main": "source/index.js",
   "repository": {
@@ -14,7 +14,6 @@
   },
   "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
-    "dotenv": "^14.2.0",
     "got": "^11.8.2"
   }
 }

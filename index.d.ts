@@ -49,6 +49,7 @@ declare interface Info extends Dati {
     desDenominazione: string;
     desCorso: string;
     prgClasse: number,
+    abilitazioni: Abilitazioni,
 }
 
 declare interface Result {

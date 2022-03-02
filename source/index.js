@@ -1,6 +1,7 @@
+// Check for update using .checkupdate() if the module is not working propertly.
+
 const got = require('got');
-require('dotenv').config();
-// Non usato - Non ricordo perché
+// Not used because it is not necessary.
 // const rgxVer = new RegExp(/([\d.])+/);
 
 class MissingError extends Error {
@@ -21,26 +22,29 @@ const arHd = {
 	agt: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
 };
 
+// Check if variable isn't null or undefined
+const ex = (v) => { return (v == undefined || v == null); };
 
 class Session {
 	logIn = false;
 	info = {};
 	version;
 
-	constructor(scuola, nome, pass, version = arHd.ver) {
-		if (!scuola || typeof scuola != 'string') throw (!scuola ? new MissingError('Missing school code') : new TypeError('School code must be a String'));
-		if (!nome || typeof nome != 'string') throw (!nome ? new MissingError('Missing name') : new TypeError('Name must be a String'));
+	constructor(scuola, nome, pass) {
+		if (ex(scuola) || typeof scuola != 'string') throw (ex(scuola) ? new MissingError('Missing school code') : new TypeError('School code must be a String'));
+		if (ex(nome) || typeof nome != 'string') throw (ex(nome) ? new MissingError('Missing name') : new TypeError('Name must be a String'));
+		if (ex(pass) || typeof pass != 'string') throw (ex(pass) ? new MissingError('Missing name') : new TypeError('Name must be a String'));
 
-		return this.#initialize(scuola, nome, pass, version);
+		return this.#initialize(scuola, nome, pass);
 	}
 
-	async #initialize(scuola, nome, pass, version = arHd.ver) {
+	async #initialize(scuola, nome, pass) {
 		try {
 			const response = await got(
 				`${arHd.ept}login`, {
 				headers: {
 					"x-key-app": arHd.key,
-					"x-version": this.version,
+					"x-version": arHd.ver,
 					"x-produttore-software": arHd.cpn,
 					"x-app-code": arHd.cod,
 					"user-agent": arHd.agt,
@@ -53,30 +57,26 @@ class Session {
 				},
 				responseType: 'json'
 			});
-			this.info = (await this.#getInfos(scuola,
-				response.body['token'],
-				version))[0];
+			this.info = (await this.#getInfos(scuola, response.body['token']))[0];
 
 		} catch (error) {
 			console.log(error);
 		}
 		this.logIn = true;
-		this.version = version;
 
 		return this;
 	}
 
-	async get(method, date) {
+	async get(method, date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`) {
 		if (!this.logIn) throw new Error('Client did not login'); // Contant the creator of the library if the error shouldn't have happened. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
-		if (!date) date = `${oggi.getFullYear()}-${String(oggi.getMonth() + 1).length === 2 ? oggi.getMonth() + 1 : `0${oggi.getMonth() + 1}`}-${String(oggi.getDate()).length === 2 ? oggi.getDate() : `0${oggi.getDate()}`}`;
-		if (!method || typeof method !== 'string') throw (!method ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
+		if (ex(method) || typeof method !== 'string') throw (ex(method) ? new MissingError('Missing Method') : new TypeError('Method must be a String.'));
 
 		try {
 			const response = await got(
 				`${arHd.ept}${method}`, {
 				headers: {
 					"x-key-app": arHd.key,
-					"x-version": this.version,
+					"x-version": arHd.ver,
 					"user-agent": arHd.agt,
 					"x-produttore-software": arHd.cpn,
 					"x-app-code": arHd.cod,
@@ -93,12 +93,10 @@ class Session {
 				responseType: 'json'
 			});
 			return response.body;
-
 		} catch (error) {
 			switch (error.message) {
 				case 'Response code 404 (Not Found)':
-					// console.log(error);
-					throw new Error('This get does not exist.');
+					throw new Error('That method does not exist not exist.');
 
 				default:
 					console.log(error);
@@ -107,15 +105,14 @@ class Session {
 		}
 	}
 
-	async #getInfos(scuola, token, version = arHd.ver) {
-		if (!scuola) throw new MissingError('Missing school code');
-		if (!token) throw new MissingError('Missing token.'); // Contant the creator of the library if the error shouldn't have happened. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
+	async #getInfos(scuola, token) {
+		if (ex(token)) throw new MissingError('Missing token.'); // Contant the creator of the library if the error shouldn't have happened. https://github.com/ReLoia/ArgoScuolaNext-NodeJS
 		try {
 			const response = await got(
 				`${arHd.ept}schede`, {
 				headers: {
 					"x-key-app": arHd.key,
-					"x-version": version,
+					"x-version": arHd.ver,
 					"x-produttore-software": arHd.cpn,
 					"x-app-code": arHd.cod,
 					"user-agent": arHd.agt,
@@ -138,24 +135,21 @@ class Session {
 		return this.info.authToken;
 	}
 
-	async upcheck() {
-		if (!((process.env.NO_ARGOLB_UPDATE ? process.env.NO_ARGOLB_UPDATE.toLowerCase() : "") === 'true')) { // If the environment variable "NO_ARGOLB_UPDATE" is true then the library will not check for updates
-			try {
-				const response = await got(
-					'https://api.github.com/repos/ReLoia/ArgoScuolaNext-NodeJS/releases/latest', {
-					responseType: 'json'
-				});
-				if (response.body.tag_name !== (require('../package.json').version)) {
-					console.warn('\x1b[33m[ArgoScuolaNext] The library is out of date! Update it from npm.\x1b[0m');
-				}
+	// Return false if the module is not updated, true if it is updated.
+	async checkupdate() {
+		try {
+			const response = await got(
+				'https://api.github.com/repos/ReLoia/ArgoScuolaNext-NodeJS/releases/latest', {
+				responseType: 'json'
+			});
+			if (response.body.tag_name !== (require('../package.json').version)) {
+				console.warn('\x1b[33m[ArgoScuolaNext] The library is out of date! Update it using `npm i argoscuolanext` or `yarn add argoscuolanext`.\x1b[0m');
 			}
-			catch (err) {
-				console.log(`There was an error while checking for updates: "${err.message}"
-You can disable this check setting the environment variable "NO_ARGOLB_UPDATE" to true`);
-			}
+		}
+		catch (err) {
+			console.log(`There was an error while checking for updates: "${err.message}"`);
 		}
 	}
 }
 
-Session.prototype.upcheck();
 module.exports = Session;
