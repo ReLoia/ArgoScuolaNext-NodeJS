@@ -15,5 +15,12 @@
   "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
     "got": "^11.8.2"
-  }
+  },
+  "keywords": [
+    "argoscuolanext",
+    "argo",
+    "didup",
+    "api",
+    "scuolanext"
+  ]
 }
