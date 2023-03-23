@@ -5,12 +5,12 @@ This is not designed for production use it is primarily intended for testing and
 
 ## Installation
 ```bash
-npm i 
+npm i ArgoScuolaNext
 (pnpm add / yarn add) 
 ```
 Importing the package:
 ```js
-import Session from "";
+import Session from "argoscuolanext";
 ```
 
 ## Usage

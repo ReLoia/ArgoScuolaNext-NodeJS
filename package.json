@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
+    "@types/puppeteer": "^7.0.4",
     "puppeteer": "^19.7.5"
   },
   "keywords": [
