@@ -2,8 +2,8 @@ import puppeteer, { Browser, Page } from "puppeteer";
 
 export default class Session {
     logIn = false;
-    browser: Browser;
-    page: Page = null;
+    browser: Browser | undefined;;
+    page: Page | undefined;
 
     scuola: string;
     nome: string;
@@ -16,7 +16,7 @@ export default class Session {
         this.pass = pass;
         this.debug = debug;
     }
-    #debugLog = (...msg) => {
+    #debugLog = (...msg: any) => {
         if (this.debug) {
             console.log(...msg);
         }
@@ -33,30 +33,28 @@ export default class Session {
         return this.logIn;
     }
     #pageLoaded = async () => {
-        this.#debugLog("Loaded: ", this.page.url());
-        if (this.page.url().includes("?login_challenge")) {
+        this.#debugLog("Loaded: ", this.page?.url());
+        if (this.page?.url().includes("?login_challenge")) {
             await this.page.type("#username", this.nome);
             await this.page.type("#password", this.pass);
             await this.page.click(".card-body #accediBtn");
-        } else if (this.page.url().includes("auth/sso/login")) {
-            if ((await this.html()).includes("Username e/o password non validi")) {
+        } else if (this.page?.url().includes("auth/sso/login")) {
+            if ((await this.html())?.includes("Username e/o password non validi")) {
                 throw new Error("Username e/o password non validi");
             }
             this.close();
-        } else if (this.page.url().includes("argoweb/famiglia/index.jsf")) {
+        } else if (this.page?.url().includes("argoweb/famiglia/index.jsf")) {
             this.logIn = true;
             this.#debugLog("Logged in");
         }
     };
 
-    // methods: compiti, argomenti, docenti, assenze, note, voti
-
-    async compiti(): Promise<Array<{ consegna: string, materia: string, compito: string, assegnato: string }>> {
+    async compiti(): Promise<Array<{ consegna: string, materia: string, compito: string, assegnato: string }> | undefined> {
         await this.#clickEl("[id='menu-serviziclasse:compiti']");
 
-        await this.page.waitForSelector('[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset');
-        const ris = this.page.evaluate(() => {
-            const riss = [];
+        await this.page?.waitForSelector('[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset');
+        const ris = this.page?.evaluate(() => {
+            let riss: Array<any> = [];
             const fieldsets = Array.from(
                 document.querySelectorAll(
                     '[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset'
@@ -69,10 +67,10 @@ export default class Session {
                         /<td> (.+) \(Assegnati il ([0-9]{2}\/[0-9]{2}\/[0-9]{4})/g
                     ).exec(il.innerHTML);
                     riss.push({
-                        consegna: el.querySelector("legend").innerText,
-                        materia: el.querySelector("b").innerText,
-                        compito: info[1],
-                        assegnato: info[2],
+                        consegna: el?.querySelector("legend")?.innerText,
+                        materia: el?.querySelector("b")?.innerText,
+                        compito: info?.[1],
+                        assegnato: info?.[2],
                     });
                 });
             });
@@ -82,14 +80,14 @@ export default class Session {
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async argomenti(): Promise<Array<{ materia: string, data: string, argomento: string }>> {
+    async argomenti(): Promise<Array<{ materia: string | undefined, data: string, argomento: string }> | undefined> {
         await this.#clickEl("[id='menu-serviziclasse:argomenti']");
 
-        await this.page.waitForSelector('[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset');
+        await this.page?.waitForSelector('[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset');
         
-        const ris = this.page.evaluate(() => {
-            let riss = [];
-            let lastData;
+        const ris = this.page?.evaluate(() => {
+            let riss: Array<{ materia: string | undefined, data: string, argomento: string }> = [];
+            let lastData: any;
 
             const fieldsets = Array.from(
                 document.querySelectorAll('[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset')
@@ -102,7 +100,7 @@ export default class Session {
                     riss.push({
                         materia: el.querySelector("legend")?.innerText,
                         data: lastData,
-                        argomento: arg?.innerText,
+                        argomento: arg.innerText,
                     });
                 });
             });
@@ -115,8 +113,8 @@ export default class Session {
     async docenti() {
         await this.#clickEl("[id='menu-serviziclasse:docenti-classe']");
 
-        await this.page.waitForSelector('[id="sheet-docentiClasse:listgrid"] tr');
-        const ris = this.page.evaluate(() => {
+        await this.page?.waitForSelector('[id="sheet-docentiClasse:listgrid"] tr');
+        const ris = this.page?.evaluate(() => {
             const els = Array.from(
                 document.querySelectorAll('[id="sheet-docentiClasse:listgrid"] .btl-grid-dataViewContainer tbody tr')
             );
@@ -139,17 +137,11 @@ export default class Session {
     }
     async assenze() {
         await this.#clickEl("[id='menu-servizialunno:assenze']");
-        await this.page.waitForSelector('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr');
+        await this.page?.waitForSelector('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr');
 
-        const ris = this.page.evaluate(() => {
-            const riss = {
-                assenze: [],
-                uscite: [],
-                ritardi: []
-            };
-            const elements: Array<Element> = Array.from(
-                document.querySelectorAll('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr')
-            );
+        const ris = this.page?.evaluate(() => {
+            let riss: { assenze: Array<string>, uscite: Array<string>, ritardi: Array<string> } = { assenze: [], uscite: [], ritardi: []};
+            const elements: Array<Element> = Array.from(document.querySelectorAll('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr'));
 
             elements.forEach((el) => {
                 Array.from(el.querySelectorAll('td')).forEach((il, i) => {
@@ -167,9 +159,9 @@ export default class Session {
     }
     async note() {
         await this.#clickEl("[id='menu-servizialunno:note']");
-        await this.page.waitForSelector('[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr');
+        await this.page?.waitForSelector('[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr');
 
-        const ris = this.page.evaluate(() => {
+        const ris = this.page?.evaluate(() => {
             const riss = [];
             const elements: Array<Element> = Array.from(
                 document.querySelectorAll('[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr')
@@ -190,13 +182,13 @@ export default class Session {
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async voti(): Promise<Array<{ materia: string, data: string, tipo: string, voto: string, description: string }>> {
+    async voti(): Promise<Array<{ materia: string | undefined, data: string | undefined, tipo: string | undefined, voto: string | undefined, description: string | undefined }> | undefined> {
         await this.#clickEl("[id='menu-servizialunno:voti-giornalieri']");
-        await this.page.waitForSelector('[id="sheet-sezioneDidargo:sheet"] fieldset');
+        await this.page?.waitForSelector('[id="sheet-sezioneDidargo:sheet"] fieldset');
         
-        const ris = this.page.evaluate(() => {
-            let riss = [];
-            let lastData;
+        const ris = this.page?.evaluate(() => {
+            let riss: Array<{ materia: string | undefined, data: string | undefined, tipo: string | undefined, voto: string | undefined, description: string | undefined }> = [];
+            let lastData: any;
 
             const fieldsets = Array.from(
                 document.querySelectorAll('[id="sheet-sezioneDidargo:sheet"] fieldset')
@@ -206,7 +198,7 @@ export default class Session {
                 Array.from(el.querySelectorAll("tr")).forEach(function (il) {
                     const data: any = il.querySelector("td:nth-of-type(2)");
 
-                    const info = RegExp(/(Voto [A-Z-a-z]*?) .*? \(([0-9]+\.[0-9]{2})/g).exec(il.querySelector("td:nth-of-type(3)").innerHTML);
+                    const info = RegExp(/(Voto [A-Z-a-z]*?) .*? \(([0-9]+\.[0-9]{2})/g).exec(il.querySelector("td:nth-of-type(3)")?.innerHTML ?? '');
                     lastData = data.innerText.trim() || lastData;
 
                     riss.push({
@@ -214,7 +206,7 @@ export default class Session {
                         data: lastData,
                         tipo: info?.[1],
                         voto: info?.[2],
-                        description: il.querySelector("td:nth-of-type(4)").innerHTML,
+                        description: il.querySelector("td:nth-of-type(4)")?.innerHTML,
                     });
                 });
             });
@@ -226,19 +218,19 @@ export default class Session {
     }
 
     #clickEl = async (selector: string) => {
-        await this.page.waitForSelector(selector);
-        await this.page.evaluate((sel) => {
+        await this.page?.waitForSelector(selector);
+        await this.page?.evaluate((sel) => {
             const el: any = document.querySelector(sel);
             return el.click();
         }, selector);
     };
 
     html = async () =>
-        await this.page.evaluate(() => {
+        await this.page?.evaluate(() => {
             return document.documentElement.innerHTML;
         });
 
     async close() {
-        await this.browser.close();
+        await this.browser?.close();
     }
 }
