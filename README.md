@@ -1,12 +1,16 @@
-# ArgoScuolaNext-NodeJS
+# ArgoScuolaNext-NodeJS [OBSOLETE]
 
 [![versione](https://badge.fury.io/js/argoscuolanext.svg)](https://badge.fury.io/js/argoscuolanext)
 
 A NodeJS library that allows you to interact with ArgoScuolaNext API.
 
+## Warning
+This package is OBSOLETE.  
+If you are interested in contributing by fixing this repository or creating a new one, you may find more information in [Issue #1](https://github.com/ReLoia/ArgoScuolaNext-NodeJS/issues/1).
+
 ### Premise
 
-Thank you [hearot](https://github.com/hearot/) for some informations/endpoint/and other I took from your package [ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python).
+This package was made using [hearot](https://github.com/hearot/)'s package [ArgoScuolaNext-Python](https://github.com/hearot/ArgoScuolaNext-Python) as a reference.
 
 ## Installation
 
@@ -74,8 +78,7 @@ Methods :
 
 Date :
 
-- date: The chosen date - not required < This may not work with some API endpoints < Format : YYYY/MM/DD  
-  Note: In the future some endpoint may be not written here because the API may have been updated. To stay updated check hearot package's GitHub page.  
+- date: The chosen date - not required < This may not work with some API endpoints < Format : YYYY/MM/DD
   Example:
 
 ```js
@@ -118,9 +121,8 @@ Result:
 ```
 
 Using Visual Studio code will certainly help thanks to TypeScript IntelliSense which will show code completion.
-I wrote the [module .d.ts](https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html) of the library.
 
-For more infos about results and other endpoints check hearot package's GitHub page.
+For more informations about results and other endpoints check hearot package's GitHub page.
 
 ### More examples
 
@@ -138,7 +140,7 @@ For more infos about results and other endpoints check hearot package's GitHub p
   console.log( dati.filter(dato => { // You can give any name to the variable.
   	// In the Arrow Function we must put a condition that returns true.
 	/**
-   * For example, this condition is can be used to choose only `dati` with a certain "datAssenza"
+   * For example, this condition is used to choose only `dati` with a certain "datAssenza"
    * This can be useful if the parameter `date` doesn't work with the chosen endpoint.
    *
    * We can use any condition we want.
@@ -201,9 +203,6 @@ Using Visual Studio Code or other IDE with tools like IntelliSense will certainl
 
 Any suggestion is accepted! Please if you want to contribute, fork this repo and merge when you have done the modification.
 
-## Final infos
-
-For more info contact me.
-
+## Disclaimer
 This is for EDUCATIONAL AND EVALUATION PURPOSES ONLY.  
 No responsibility is held or accepted for misuse.
