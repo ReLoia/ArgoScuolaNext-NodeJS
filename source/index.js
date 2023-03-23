@@ -1,9 +1,4 @@
-// Check for update using .checkupdate() if the module is not working propertly.
-
 const got = require('got');
-// Not used because it is not necessary.
-// const rgxVer = new RegExp(/([\d.])+/);
-
 class MissingError extends Error {
 	constructor(message) {
 		super(message);
