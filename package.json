@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
+    "@types/got": "^9.6.12",
     "got": "^11.8.2"
   },
   "keywords": [
