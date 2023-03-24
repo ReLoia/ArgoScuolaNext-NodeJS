@@ -2,8 +2,8 @@
   "name": "argoscuolanext",
   "version": "3.0.2",
   "description": "A library that make it easy to access ArgoScuolaNext API via NodeJS",
-  "main": "./src/alternative.js",
-  "types": "./src/alternative.d.ts",
+  "main": "./dist/alternative.js",
+  "types": "./dist/alternative.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ReLoia/ArgoScuolaNext-NodeJS.git"
