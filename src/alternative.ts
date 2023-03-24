@@ -22,7 +22,7 @@ export default class Session {
         }
     };
 
-    async login() {
+    async login(): Promise<boolean> {
         this.#debugLog("Logging in...");
         this.browser = await puppeteer.launch();
         this.page = await this.browser.newPage();
@@ -30,7 +30,7 @@ export default class Session {
         await this.page.goto(`http://www.${this.scuola}.scuolanext.info/`);
         await this.page.waitForNavigation();
 
-        return this.logIn;
+        return await this.#hasLoggedIn();
     }
     #pageLoaded = async () => {
         this.#debugLog("Loaded: ", this.page?.url());
@@ -48,6 +48,21 @@ export default class Session {
             this.#debugLog("Logged in");
         }
     };
+    async #hasLoggedIn(): Promise<boolean> {
+        let counter = 0;
+        return new Promise((resolve) => {
+            const interval = setInterval(async () => {
+                if (this.logIn) {
+                    clearInterval(interval);
+                    resolve(true);
+                } else if (counter > 10) {
+                    clearInterval(interval);
+                    resolve(false);
+                }
+                counter++;
+            }, 1000);
+        });
+    }
 
     async compiti(): Promise<Array<{ consegna: string, materia: string, compito: string, assegnato: string }> | undefined> {
         await this.#clickEl("[id='menu-serviziclasse:compiti']");

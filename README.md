@@ -5,7 +5,7 @@ This is not designed for production use it is primarily intended for testing and
 
 ## Installation
 ```bash
-npm i ArgoScuolaNext
+npm i argoscuolanext
 (pnpm add / yarn add) 
 ```
 Importing the package:
@@ -32,13 +32,16 @@ In this example I have also used an [Arrow Function `() => {}`](https://develope
 ### Login
 
 ```js
-// Create the session 
-const session = new Argo('school code', 'user name', 'password');
+// Create the session
+const argoscuolanext = require('./ArgoScuolaNext-NodeJS').default;
+const session = new Argo('school code', 'user name', 'password', true); // Creates a new Session instance with debug true
 
 // Use the async function
 (async () => {
   // Login using the function
-  await session.login();
+  if (await session.login()) {
+    ...
+  }
   
   ...
 })();
@@ -52,15 +55,16 @@ The informations can be obtained by calling the method of each 'endpoint'
 ...
 
 (async () => {
-  await session.login();
   
-  // The methods
-  console.log(await session.voti());
-  console.log(await session.argomenti());
-  console.log(await session.assenze());
-  console.log(await session.compiti());
-  console.log(await session.docenti());
-  console.log(await session.note());
+  if (await session.login()) {
+    // The methods
+    console.log(await session.voti());
+    console.log(await session.argomenti());
+    console.log(await session.assenze());
+    console.log(await session.compiti());
+    console.log(await session.docenti());
+    console.log(await session.note());
+  }
 
   ...
 })();

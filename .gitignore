@@ -5,3 +5,4 @@ node_modules/
 testing.ts
 source/index.js
 tsconfig.json
+alternative.ts
