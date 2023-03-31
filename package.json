@@ -1,12 +1,16 @@
 {
   "name": "argoscuolanext",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "A library that make it easy to access ArgoScuolaNext API via NodeJS",
   "main": "./dist/alternative.js",
   "types": "./dist/alternative.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ReLoia/ArgoScuolaNext-NodeJS.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "nodemon testing.js"
   },
   "author": "ReLoia",
   "license": "MIT",

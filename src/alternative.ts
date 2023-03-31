@@ -2,8 +2,8 @@ import puppeteer, { Browser, Page } from "puppeteer";
 
 export default class Session {
     logIn = false;
-    browser: Browser | undefined;;
-    page: Page | undefined;
+    browser: Browser = new Browser();
+    page: Page = new Page();
 
     scuola: string;
     nome: string;
@@ -39,7 +39,11 @@ export default class Session {
             await this.page.type("#password", this.pass);
             await this.page.click(".card-body #accediBtn");
         } else if (this.page?.url().includes("auth/sso/login")) {
-            if ((await this.html())?.includes("Username e/o password non validi")) {
+            if (
+                (await this.html())?.includes(
+                    "Username e/o password non validi"
+                )
+            ) {
                 throw new Error("Username e/o password non validi");
             }
             this.close();
@@ -50,7 +54,7 @@ export default class Session {
     };
     async #hasLoggedIn(): Promise<boolean> {
         let counter = 0;
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const interval = setInterval(async () => {
                 if (this.logIn) {
                     clearInterval(interval);
@@ -64,10 +68,20 @@ export default class Session {
         });
     }
 
-    async compiti(): Promise<Array<{ consegna: string, materia: string, compito: string, assegnato: string }> | undefined> {
+    async compiti(): Promise<
+        Array<{
+            consegna: string;
+            materia: string;
+            compito: string;
+            assegnato: string;
+        }>
+    > {
+        this.#debugLog("Executing compiti");
         await this.#clickEl("[id='menu-serviziclasse:compiti']");
 
-        await this.page?.waitForSelector('[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset');
+        await this.page?.waitForSelector(
+            '[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset'
+        );
         const ris = this.page?.evaluate(() => {
             let riss: Array<any> = [];
             const fieldsets = Array.from(
@@ -76,7 +90,7 @@ export default class Session {
                 )
             );
 
-            fieldsets.forEach((el) => {
+            fieldsets.forEach(el => {
                 Array.from(el.querySelectorAll("tr")).forEach(function (il) {
                     const info = RegExp(
                         /<td> (.+) \(Assegnati il ([0-9]{2}\/[0-9]{2}\/[0-9]{4})/g
@@ -95,20 +109,35 @@ export default class Session {
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async argomenti(): Promise<Array<{ materia: string | undefined, data: string, argomento: string }> | undefined> {
+    async argomenti(): Promise<
+        Array<{
+            materia: string | undefined;
+            data: string;
+            argomento: string;
+        }>
+    > {
+        this.#debugLog("Executing argomenti");
         await this.#clickEl("[id='menu-serviziclasse:argomenti']");
 
-        await this.page?.waitForSelector('[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset');
-        
+        await this.page?.waitForSelector(
+            '[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset'
+        );
+
         const ris = this.page?.evaluate(() => {
-            let riss: Array<{ materia: string | undefined, data: string, argomento: string }> = [];
+            let riss: Array<{
+                materia: string | undefined;
+                data: string;
+                argomento: string;
+            }> = [];
             let lastData: any;
 
             const fieldsets = Array.from(
-                document.querySelectorAll('[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset')
+                document.querySelectorAll(
+                    '[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset'
+                )
             );
 
-            fieldsets.forEach((el) => {
+            fieldsets.forEach(el => {
                 Array.from(el.querySelectorAll("tr")).forEach(function (il) {
                     const arg: any = il.querySelector("td:nth-of-type(2)");
                     lastData = il.querySelector("td")?.innerText || lastData;
@@ -126,24 +155,29 @@ export default class Session {
         return ris;
     }
     async docenti() {
+        this.#debugLog("Executing docenti");
         await this.#clickEl("[id='menu-serviziclasse:docenti-classe']");
 
-        await this.page?.waitForSelector('[id="sheet-docentiClasse:listgrid"] tr');
+        await this.page?.waitForSelector(
+            '[id="sheet-docentiClasse:listgrid"] tr'
+        );
         const ris = this.page?.evaluate(() => {
             const els = Array.from(
-                document.querySelectorAll('[id="sheet-docentiClasse:listgrid"] .btl-grid-dataViewContainer tbody tr')
+                document.querySelectorAll(
+                    '[id="sheet-docentiClasse:listgrid"] .btl-grid-dataViewContainer tbody tr'
+                )
             );
 
-            return els.map((el) => {
+            return els.map(el => {
                 // return el.innerHTML;
                 const info = RegExp(
                     /([a-z])\.png.*nominativo">(.*?)<\/.*materie">(.*?)<\//g
                 ).exec(el.innerHTML);
                 return {
-                    sesso: info?.[1] == 'f' ? "F" : "M",
-                    docente: info?.[2].replace('(*)', ''),
+                    sesso: info?.[1] == "f" ? "F" : "M",
+                    docente: info?.[2].replace("(*)", ""),
                     materia: info?.[3],
-                    coordinatore: info?.[2].includes('(*)')
+                    coordinatore: info?.[2].includes("(*)"),
                 };
             });
         });
@@ -151,16 +185,31 @@ export default class Session {
         return ris;
     }
     async assenze() {
+        this.#debugLog("Executing assenze");
         await this.#clickEl("[id='menu-servizialunno:assenze']");
-        await this.page?.waitForSelector('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr');
+        await this.page?.waitForSelector(
+            '[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr'
+        );
 
         const ris = this.page?.evaluate(() => {
-            let riss: { assenze: Array<string>, uscite: Array<string>, ritardi: Array<string> } = { assenze: [], uscite: [], ritardi: []};
-            const elements: Array<Element> = Array.from(document.querySelectorAll('[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr'));
+            let riss: {
+                assenze: Array<string>;
+                uscite: Array<string>;
+                ritardi: Array<string>;
+            } = { assenze: [], uscite: [], ritardi: [] };
+            const elements: Array<Element> = Array.from(
+                document.querySelectorAll(
+                    '[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr'
+                )
+            );
 
-            elements.forEach((el) => {
-                Array.from(el.querySelectorAll('td')).forEach((il, i) => {
-                    if (il.innerHTML.includes('span[style=";"]') || !il.innerText) return;
+            elements.forEach(el => {
+                Array.from(el.querySelectorAll("td")).forEach((il, i) => {
+                    if (
+                        il.innerHTML.includes('span[style=";"]') ||
+                        !il.innerText
+                    )
+                        return;
                     if (i == 0) riss.assenze.push(il.innerText);
                     if (i == 1) riss.uscite.push(il.innerText);
                     if (i == 2) riss.ritardi.push(il.innerText);
@@ -173,17 +222,24 @@ export default class Session {
         return ris;
     }
     async note() {
+        this.#debugLog("Executing note");
         await this.#clickEl("[id='menu-servizialunno:note']");
-        await this.page?.waitForSelector('[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr');
+        await this.page?.waitForSelector(
+            '[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr'
+        );
 
         const ris = this.page?.evaluate(() => {
             const riss = [];
             const elements: Array<Element> = Array.from(
-                document.querySelectorAll('[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr')
+                document.querySelectorAll(
+                    '[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr'
+                )
             );
 
-            return elements.map((el) => {
-                const info = RegExp(/([0-9]{2}\/[0-9]{2}\/[0-9]{4})<\/span.*?display:none;">([A-Z\/a-z ,.'0-9]+)<.*?display:none;">([A-Z-a-z- -,-.]+)<\/span>.*?display:none;">[A-Z-a-z- -,-.]+<\/span>.*?display:none;">([0-9]{2}:[0-9]{2}:[0-9]{2})<\//g).exec(el.innerHTML);
+            return elements.map(el => {
+                const info = RegExp(
+                    /([0-9]{2}\/[0-9]{2}\/[0-9]{4})<\/span.*?display:none;">([A-Z\/a-z ,.'0-9]+)<.*?display:none;">([A-Z-a-z- -,-.]+)<\/span>.*?display:none;">[A-Z-a-z- -,-.]+<\/span>.*?display:none;">([0-9]{2}:[0-9]{2}:[0-9]{2})<\//g
+                ).exec(el.innerHTML);
                 return {
                     data: info?.[1],
                     nota: info?.[2],
@@ -197,23 +253,47 @@ export default class Session {
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async voti(): Promise<Array<{ materia: string | undefined, data: string | undefined, tipo: string | undefined, voto: string | undefined, description: string | undefined }> | undefined> {
+    async voti(): Promise<
+        Array<{
+            materia: string | undefined;
+            data: string | undefined;
+            tipo: string | undefined;
+            voto: string | undefined;
+            description: string | undefined;
+        }>
+    > {
+        this.#debugLog("Executing voti");
+        if (!this.logIn) return [];
         await this.#clickEl("[id='menu-servizialunno:voti-giornalieri']");
-        await this.page?.waitForSelector('[id="sheet-sezioneDidargo:sheet"] fieldset');
-        
-        const ris = this.page?.evaluate(() => {
-            let riss: Array<{ materia: string | undefined, data: string | undefined, tipo: string | undefined, voto: string | undefined, description: string | undefined }> = [];
+        await this.page?.waitForSelector(
+            '[id="sheet-sezioneDidargo:sheet"] fieldset'
+        );
+
+        const ris = this.page.evaluate(() => {
+            let riss: Array<{
+                materia: string | undefined;
+                data: string | undefined;
+                tipo: string | undefined;
+                voto: string | undefined;
+                description: string | undefined;
+            }> = [];
             let lastData: any;
 
             const fieldsets = Array.from(
-                document.querySelectorAll('[id="sheet-sezioneDidargo:sheet"] fieldset')
+                document.querySelectorAll(
+                    '[id="sheet-sezioneDidargo:sheet"] fieldset'
+                )
             );
 
-            fieldsets.forEach((el) => {
+            fieldsets.forEach(el => {
                 Array.from(el.querySelectorAll("tr")).forEach(function (il) {
                     const data: any = il.querySelector("td:nth-of-type(2)");
 
-                    const info = RegExp(/(Voto [A-Z-a-z]*?) .*? \(([0-9]+\.[0-9]{2})/g).exec(il.querySelector("td:nth-of-type(3)")?.innerHTML ?? '');
+                    const info = RegExp(
+                        /(Voto [A-Z-a-z]*?) .*? \(([0-9]+\.[0-9]{2})/g
+                    ).exec(
+                        il.querySelector("td:nth-of-type(3)")?.innerHTML ?? ""
+                    );
                     lastData = data.innerText.trim() || lastData;
 
                     riss.push({
@@ -221,7 +301,8 @@ export default class Session {
                         data: lastData,
                         tipo: info?.[1],
                         voto: info?.[2],
-                        description: il.querySelector("td:nth-of-type(4)")?.innerHTML,
+                        description:
+                            il.querySelector("td:nth-of-type(4)")?.innerHTML,
                     });
                 });
             });
@@ -234,7 +315,7 @@ export default class Session {
 
     #clickEl = async (selector: string) => {
         await this.page?.waitForSelector(selector);
-        await this.page?.evaluate((sel) => {
+        await this.page?.evaluate(sel => {
             const el: any = document.querySelector(sel);
             return el.click();
         }, selector);
@@ -246,6 +327,8 @@ export default class Session {
         });
 
     async close() {
-        await this.browser?.close();
+        try {
+            await this.browser?.close();
+        } catch {}
     }
 }
