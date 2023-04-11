@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/ReLoia/ArgoScuolaNext-NodeJS#readme",
   "dependencies": {
-    "puppeteer": "^19.7.5"
+    "puppeteer": "^19.8.5"
   },
   "keywords": [
     "argoscuolanext",

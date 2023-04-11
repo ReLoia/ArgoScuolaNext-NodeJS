@@ -84,20 +84,18 @@ export default class Session {
         );
         const ris = this.page?.evaluate(() => {
             let riss: Array<any> = [];
-            const fieldsets = Array.from(
+            Array.from(
                 document.querySelectorAll(
                     '[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset'
                 )
-            );
-
-            fieldsets.forEach(el => {
-                Array.from(el.querySelectorAll("tr")).forEach(function (il) {
-                    const info = RegExp(
-                        /<td> (.+) \(Assegnati il ([0-9]{2}\/[0-9]{2}\/[0-9]{4})/g
-                    ).exec(il.innerHTML);
+            ).forEach(fieldset => {
+                let lastMateria = "";
+                Array.from(fieldset.querySelectorAll("tr")).forEach(function (tr) {
+                    const info = /<td> (.+) \(Assegnati il (\d{2}\/\d{2}\/\d{4})/g.exec(tr.innerHTML);
+                    lastMateria = tr.querySelector("td")?.innerText || lastMateria;
                     riss.push({
-                        consegna: el?.querySelector("legend")?.innerText,
-                        materia: el?.querySelector("b")?.innerText,
+                        consegna: fieldset.querySelector("legend")?.innerText,
+                        materia: lastMateria,
                         compito: info?.[1],
                         assegnato: info?.[2],
                     });
@@ -129,22 +127,19 @@ export default class Session {
                 data: string;
                 argomento: string;
             }> = [];
-            let lastData: any;
 
-            const fieldsets = Array.from(
+            Array.from(
                 document.querySelectorAll(
                     '[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset'
                 )
-            );
-
-            fieldsets.forEach(el => {
-                Array.from(el.querySelectorAll("tr")).forEach(function (il) {
-                    const arg: any = il.querySelector("td:nth-of-type(2)");
-                    lastData = il.querySelector("td")?.innerText || lastData;
+            ).forEach(fieldset => {
+                let lastData = "";
+                Array.from(fieldset.querySelectorAll("tr")).forEach(function (tr) {
+                    lastData = tr.querySelector("b")?.innerText || lastData;
                     riss.push({
-                        materia: el.querySelector("legend")?.innerText,
+                        materia: fieldset.querySelector("legend")?.innerText,
                         data: lastData,
-                        argomento: arg.innerText,
+                        argomento: tr.innerText.replace(lastData, "").trim(),
                     });
                 });
             });
@@ -162,17 +157,13 @@ export default class Session {
             '[id="sheet-docentiClasse:listgrid"] tr'
         );
         const ris = this.page?.evaluate(() => {
-            const els = Array.from(
+            return Array.from(
                 document.querySelectorAll(
                     '[id="sheet-docentiClasse:listgrid"] .btl-grid-dataViewContainer tbody tr'
                 )
-            );
-
-            return els.map(el => {
+            ).map(el => {
                 // return el.innerHTML;
-                const info = RegExp(
-                    /([a-z])\.png.*nominativo">(.*?)<\/.*materie">(.*?)<\//g
-                ).exec(el.innerHTML);
+                const info = /([a-z])\.png.*nominativo">(.*?)<\/.*materie">(.*?)<\//g.exec(el.innerHTML);
                 return {
                     sesso: info?.[1] == "f" ? "F" : "M",
                     docente: info?.[2].replace("(*)", ""),
@@ -197,13 +188,12 @@ export default class Session {
                 uscite: Array<string>;
                 ritardi: Array<string>;
             } = { assenze: [], uscite: [], ritardi: [] };
-            const elements: Array<Element> = Array.from(
+
+            Array.from(
                 document.querySelectorAll(
                     '[id="sheet-assenzeGiornaliere:sheet"] .btl-grid-dataViewContainer tbody tr'
                 )
-            );
-
-            elements.forEach(el => {
+            ).forEach(el => {
                 Array.from(el.querySelectorAll("td")).forEach((il, i) => {
                     if (
                         il.innerHTML.includes('span[style=";"]') ||
@@ -229,17 +219,12 @@ export default class Session {
         );
 
         const ris = this.page?.evaluate(() => {
-            const riss = [];
-            const elements: Array<Element> = Array.from(
+            return Array.from(
                 document.querySelectorAll(
                     '[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr'
                 )
-            );
-
-            return elements.map(el => {
-                const info = RegExp(
-                    /([0-9]{2}\/[0-9]{2}\/[0-9]{4})<\/span.*?display:none;">([A-Z\/a-z ,.'0-9]+)<.*?display:none;">([A-Z-a-z- -,-.]+)<\/span>.*?display:none;">[A-Z-a-z- -,-.]+<\/span>.*?display:none;">([0-9]{2}:[0-9]{2}:[0-9]{2})<\//g
-                ).exec(el.innerHTML);
+            ).map(tr => {
+                const info = /(\d{2}\/\d{2}\/\d{4})<\/span.*?display:none;">([A-Z\/a-z ,.'\d]+)<.*?display:none;">([A-Z-a-z- -,-.]+)<\/span>.*?display:none;">([A-Z-a-z ]+)<\/span>.*?display:none;">(\d{2}:\d{2}:\d{2})<\//g.exec(tr.innerHTML);
                 return {
                     data: info?.[1],
                     nota: info?.[2],
@@ -279,30 +264,26 @@ export default class Session {
             }> = [];
             let lastData: any;
 
-            const fieldsets = Array.from(
+            Array.from(
                 document.querySelectorAll(
                     '[id="sheet-sezioneDidargo:sheet"] fieldset'
                 )
-            );
+            ).forEach(fieldset => {
+                Array.from(fieldset.querySelectorAll("tr")).forEach(function (tr) {
+                    const data: any = tr.querySelector("td:nth-of-type(2)");
 
-            fieldsets.forEach(el => {
-                Array.from(el.querySelectorAll("tr")).forEach(function (il) {
-                    const data: any = il.querySelector("td:nth-of-type(2)");
-
-                    const info = RegExp(
-                        /(Voto [A-Z-a-z]*?) .*? \(([0-9]+\.[0-9]{2})/g
-                    ).exec(
-                        il.querySelector("td:nth-of-type(3)")?.innerHTML ?? ""
+                    const info = /(Voto [A-Z-a-z]*?) .*? \((\d+\.\d{2})/g.exec(
+                        tr.querySelector("td:nth-of-type(3)")?.innerHTML ?? ""
                     );
                     lastData = data.innerText.trim() || lastData;
 
                     riss.push({
-                        materia: el.querySelector("legend")?.innerText,
+                        materia: fieldset.querySelector("legend")?.innerText,
                         data: lastData,
                         tipo: info?.[1],
                         voto: info?.[2],
                         description:
-                            il.querySelector("td:nth-of-type(4)")?.innerHTML,
+                            tr.querySelector("td:nth-of-type(4)")?.innerHTML.trim(),
                     });
                 });
             });
