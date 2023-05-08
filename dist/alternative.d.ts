@@ -6,17 +6,18 @@ export default class Session {
     page: Page;
     scuola: string;
     nome: string;
-    pass: string;
     debug: boolean;
-    constructor(scuola: string, nome: string, pass: string, debug?: boolean);
+    debugCallback: (...msg: any) => void;
+    constructor(scuola: string, nome: string, pass: string, debug?: boolean, debugCallback?: (...msg: any) => void);
+    setDebugCallback(callback: (...msg: any) => void): void;
     login(): Promise<boolean>;
-    compiti(): Promise<Array<{
+    compiti(limit?: number): Promise<Array<{
         consegna: string;
         materia: string;
         compito: string;
         assegnato: string;
     }>>;
-    argomenti(): Promise<Array<{
+    argomenti(limit?: number): Promise<Array<{
         materia: string | undefined;
         data: string;
         argomento: string;
@@ -32,14 +33,14 @@ export default class Session {
         uscite: Array<string>;
         ritardi: Array<string>;
     }>;
-    note(): Promise<{
+    note(limit?: number): Promise<{
         data: string | undefined;
         nota: string | undefined;
         docente: string | undefined;
         categoria: string | undefined;
         ora: string | undefined;
     }[]>;
-    voti(): Promise<Array<{
+    voti(limit?: number): Promise<Array<{
         materia: string | undefined;
         data: string | undefined;
         tipo: string | undefined;

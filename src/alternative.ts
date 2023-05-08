@@ -7,21 +7,27 @@ export default class Session {
 
     scuola: string;
     nome: string;
-    pass: string;
+    #pass: string;
     debug = false;
+    debugCallback = (...msg: any) => {};
 
-    constructor(scuola: string, nome: string, pass: string, debug = false) {
+    constructor(scuola: string, nome: string, pass: string, debug = false, debugCallback = (...msg: any) => {}) {
         this.scuola = scuola;
         this.nome = nome;
-        this.pass = pass;
+        this.#pass = pass;
         this.debug = debug;
+        this.debugCallback = debugCallback;
     }
     #debugLog = (...msg: any) => {
         if (this.debug) {
+            this.debugCallback(...msg);
             console.log(...msg);
         }
     };
 
+    setDebugCallback(callback: (...msg: any) => void) {
+        this.debugCallback = callback;
+    }
     async login(): Promise<boolean> {
         this.#debugLog("Logging in...");
         this.browser = await puppeteer.launch();
@@ -36,7 +42,7 @@ export default class Session {
         this.#debugLog("Loaded: ", this.page?.url());
         if (this.page?.url().includes("?login_challenge")) {
             await this.page.type("#username", this.nome);
-            await this.page.type("#password", this.pass);
+            await this.page.type("#password", this.#pass);
             await this.page.click(".card-body #accediBtn");
         } else if (this.page?.url().includes("auth/sso/login")) {
             if (
@@ -68,7 +74,7 @@ export default class Session {
         });
     }
 
-    async compiti(): Promise<
+    async compiti(limit = 20): Promise<
         Array<{
             consegna: string;
             materia: string;
@@ -82,7 +88,7 @@ export default class Session {
         await this.page?.waitForSelector(
             '[id="sheet-compitiAssegnati:panel-compitiassegnati:form"] fieldset'
         );
-        const ris = this.page?.evaluate(() => {
+        const ris = this.page?.evaluate((limite) => {
             let riss: Array<any> = [];
             Array.from(
                 document.querySelectorAll(
@@ -102,12 +108,12 @@ export default class Session {
                 });
             });
 
-            return riss;
-        });
+            return riss.slice(0,limite);
+        }, limit);
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async argomenti(): Promise<
+    async argomenti(limit = 20): Promise<
         Array<{
             materia: string | undefined;
             data: string;
@@ -121,7 +127,7 @@ export default class Session {
             '[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset'
         );
 
-        const ris = this.page?.evaluate(() => {
+        const ris = this.page?.evaluate((limite) => {
             let riss: Array<{
                 materia: string | undefined;
                 data: string;
@@ -132,7 +138,8 @@ export default class Session {
                 document.querySelectorAll(
                     '[id="sheet-argomentiLezione:panel-argomentilezione:form"] fieldset'
                 )
-            ).forEach(fieldset => {
+            )
+            .forEach(fieldset => {
                 let lastData = "";
                 Array.from(fieldset.querySelectorAll("tr")).forEach(function (tr) {
                     lastData = tr.querySelector("b")?.innerText || lastData;
@@ -144,8 +151,8 @@ export default class Session {
                 });
             });
 
-            return riss;
-        });
+            return riss.slice(0,limite);
+        }, limit);
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
@@ -211,19 +218,21 @@ export default class Session {
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async note() {
+    async note(limit = 20) {
         this.#debugLog("Executing note");
         await this.#clickEl("[id='menu-servizialunno:note']");
         await this.page?.waitForSelector(
             '[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr'
         );
 
-        const ris = this.page?.evaluate(() => {
+        const ris = this.page?.evaluate((limite) => {
             return Array.from(
                 document.querySelectorAll(
                     '[id="sheet-noteDisciplinari:sheet"] .btl-grid-dataViewContainer tbody tr'
                 )
-            ).map(tr => {
+            )
+            .slice(0,limite)
+            .map(tr => {
                 const info = /(\d{2}\/\d{2}\/\d{4})<\/span.*?display:none;">([A-Z\/a-z ,.'\d]+)<.*?display:none;">([A-Z-a-z- -,-.]+)<\/span>.*?display:none;">([A-Z-a-z ]+)<\/span>.*?display:none;">(\d{2}:\d{2}:\d{2})<\//g.exec(tr.innerHTML);
                 return {
                     data: info?.[1],
@@ -233,12 +242,12 @@ export default class Session {
                     ora: info?.[5],
                 };
             });
-        });
+        }, limit);
 
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
-    async voti(): Promise<
+    async voti(limit = 20): Promise<
         Array<{
             materia: string | undefined;
             data: string | undefined;
@@ -254,7 +263,7 @@ export default class Session {
             '[id="sheet-sezioneDidargo:sheet"] fieldset'
         );
 
-        const ris = this.page.evaluate(() => {
+        const ris = this.page.evaluate((limite) => {
             let riss: Array<{
                 materia: string | undefined;
                 data: string | undefined;
@@ -288,14 +297,16 @@ export default class Session {
                 });
             });
 
-            return riss;
-        });
+            return riss.slice(0,limite);
+        }, limit);
         this.#clickEl(".btl-modal-head-mid .btl-modal-closeButton");
         return ris;
     }
 
     #clickEl = async (selector: string) => {
+        this.#debugLog(`Searching ${selector}`);
         await this.page?.waitForSelector(selector);
+        this.#debugLog(`Clicking ${selector}`);
         await this.page?.evaluate(sel => {
             const el: any = document.querySelector(sel);
             return el.click();

@@ -70,6 +70,13 @@ The informations can be obtained by calling the method of each 'endpoint'
 })();
 ```
 
+### Debug
+If the debug flag is enabled the library will start printing in console the actions it is doing.  
+You can pass a callback using the `debugCallback` function or add/change it via the `setDebugCallback` function, it will be executed with the print in console and with the same string as a parameter.
+
+### Limits
+You can limit the amount of elements that will be returned by every functions passing a `number` as parameter.
+
 ### Contributing
 
 Any suggestion is accepted! Please if you want to contribute, fork this repo and merge when you have done the modification.
