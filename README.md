@@ -1,7 +1,15 @@
 # ArgoScuolaNext-NodeJS [ALTERNATIVE]
+  
+  [![npm version](https://badge.fury.io/js/argoscuolanext.svg)](https://badge.fury.io/js/argoscuolanext)
+  [![npm downloads](https://img.shields.io/npm/dt/argoscuolanext.svg)](https://www.npmjs.com/package/argoscuolanext)
 
-A NodeJS library that uses Puppeeteer to interact with ArgoScuolaNext.
+A NodeJS library that uses Puppeteer to interact with ArgoScuolaNext.  
 This is not designed for production use it is primarily intended for testing and learning purposes.
+
+## A better alternative to this library
+
+I have recently found a better alternative to this library, it is called [portaleargo-api](https://github.com/DTrombett/portaleargo-api). It is based on the actual API used by the app and it is much faster and easier to use.  
+This repository will be archived and I will not continue to develop it.
 
 ## Installation
 ```bash
